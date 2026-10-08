@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
+<script>if(window.top!==window.self){document.documentElement.hidden=true}</script>
+<title>PokéPOS · Estoque, entregas e caixa da PokéBottons</title>
+<meta name="description" content="Sistema privado da PokéBottons para controle de estoque (folhas e bottons), entregas, valores a receber e caixa.">
+<meta name="author" content="Ruan Oliveira Lima">
+<meta name="creator" content="Ruan Oliveira Lima">
+<meta name="publisher" content="PokéBottons">
+<meta name="copyright" content="© 2026 Ruan Oliveira Lima">
+<meta name="license" content="CC BY-SA 4.0 — Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional">
+<meta name="generator" content="PokéPOS">
+<meta name="application-name" content="PokéPOS">
+<meta name="version" content="1.1">
+<meta name="date" content="2026-10-06">
+<meta name="revised" content="2026-10-07T23:09:46-03:00">
+<meta name="category" content="BusinessApplication">
+<meta name="subject" content="Estoque, entregas e caixa da PokéBottons">
+<meta name="language" content="pt-BR">
+<meta name="coverage" content="Brasil">
+<meta name="distribution" content="iu">
+<meta name="rating" content="general">
+<meta name="audience" content="general">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="google" content="notranslate">
+<meta name="referrer" content="no-referrer">
+<meta name="format-detection" content="telephone=no, address=no, email=no">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br">
+<link rel="author" href="https://www.instagram.com/ruanoliveiralima_/">
+<link rel="me" href="https://www.instagram.com/ruanoliveiralima_/">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#E10F1E">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PokéPOS">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="msapplication-TileColor" content="#E10F1E">
+<meta name="msapplication-TileImage" content="icon-192.png">
+<meta name="msapplication-tap-highlight" content="no">
+<meta name="DC.title" content="PokéPOS">
+<meta name="DC.creator" content="Ruan Oliveira Lima">
+<meta name="DC.publisher" content="PokéBottons">
+<meta name="DC.language" content="pt-BR">
+<meta name="DC.rights" content="CC BY-SA 4.0">
+<meta name="DC.type" content="InteractiveResource">
+<meta name="DC.format" content="text/html">
+<meta name="DC.date" content="2026-10-06">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PokéPOS">
+<meta property="og:title" content="PokéPOS · Estoque, entregas e caixa">
+<meta property="og:description" content="Sistema privado da PokéBottons.">
+<meta property="og:image" content="https://limaoruan.github.io/pokepos/og-image.jpg">
+<meta property="og:image:secure_url" content="https://limaoruan.github.io/pokepos/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo do PokéPOS: uma Poké Bola ao lado de um monitor com carrinho de compras e gráfico.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:domain" content="limaoruan.github.io">
+<meta name="twitter:title" content="PokéPOS · Estoque, entregas e caixa">
+<meta name="twitter:description" content="Sistema privado da PokéBottons.">
+<meta name="twitter:image" content="https://limaoruan.github.io/pokepos/og-image.jpg">
+<meta name="twitter:image:alt" content="Logo do PokéPOS: uma Poké Bola ao lado de um monitor com carrinho de compras e gráfico.">
+<style>
+  .nw{ white-space:nowrap; }
+:root{--r:#E10F1E;--rd:#B01020;--k:#0c0b0c;--bg:#f4f4f6;--c:#fff;--b:#e2e2e8;--m:#6b6b76;--ok:#12803a;--w:#b45309;box-sizing:border-box}
+@media(prefers-color-scheme:dark){:root{--bg:#121214;--c:#1c1c20;--b:#2d2d34;--k:#f2f2f4;--m:#9a9aa6;--ok:#4ade80;--w:#fbbf24}}
+*,*::before,*::after{box-sizing:inherit}html,body{height:100%;overflow:hidden}#app{display:flex;flex-direction:column;height:100dvh}.pg{display:flex;justify-content:center;align-items:center;gap:.8rem;margin:.5rem 0 0}.btn:disabled{opacity:.4}
+html,body{margin:0}body{font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--k)}
+button,input{font:inherit;color:inherit}
+header{background:var(--r);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:calc(.7rem + env(safe-area-inset-top,0px)) 1rem .7rem}
+.brand{display:flex;align-items:center;gap:.6rem}.brand img{width:38px;height:38px;border-radius:9px;background:#fff}header b{font-size:1.25rem}header button{background:#0003;border:0;color:#fff;border-radius:8px;padding:.4rem .8rem}
+main{flex:1;min-height:0;overflow:hidden;width:100%;max-width:760px;margin:0 auto;padding:.8rem 1rem .4rem}
+nav{display:flex;background:var(--c);border-top:1px solid var(--b)}
+nav button{flex:1;border:0;background:none;padding:.85rem .2rem;font-weight:600;color:var(--m);position:relative}
+nav button.on{color:var(--r);box-shadow:inset 0 3px 0 var(--r)}nav i{font-style:normal;background:var(--r);color:#fff;border-radius:99px;font-size:.7rem;padding:.05rem .4rem;margin-left:.3rem}
+.card{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:.9rem;margin:.6rem 0}
+.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}.sp{justify-content:space-between}
+h2{margin:.2rem 0 .6rem;font-size:1.15rem}small,.m{color:var(--m)}
+input{width:100%;padding:.7rem;border:1px solid var(--b);border-radius:10px;background:var(--bg)}
+.btn{border:0;border-radius:10px;padding:.7rem 1rem;font-weight:700;background:var(--r);color:#fff;min-height:44px}
+.btn.s{background:var(--bg);color:var(--k);border:1px solid var(--b)}.btn.g{background:var(--ok);color:#fff}.btn.sm{padding:.45rem .8rem;min-height:38px}.btn.x{background:none;color:var(--r);border:1px solid var(--r)}
+.tag{font-weight:700;color:var(--w)}.ok{color:var(--ok);font-weight:700}.bad{color:var(--r);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}.stats .card{margin:0;text-align:center;padding:.7rem .3rem}.stats b{display:block;font-size:1.15rem}
+.stats small{display:block}.pos{color:var(--ok)}.neg{color:var(--r)}
+dialog{border:0;border-radius:16px;padding:1.2rem;width:min(92vw,420px);background:var(--c);color:var(--k)}dialog::backdrop{background:#0008}
+label.c{display:flex;gap:.6rem;align-items:center;margin:.8rem 0}label.c input{width:1.3rem;height:1.3rem}
+#login{max-width:380px;margin:7vh auto 0;padding:1rem}
+.err{color:var(--r);font-weight:600;margin:.6rem 0 0}.err:empty{display:none}
+#login .logo{display:block;width:auto;height:120px;max-width:100%;margin:0 auto 0;border-radius:24px}
+footer{text-align:left;background:var(--c);border-top:1px solid var(--b);color:var(--m);font-size:.7rem;line-height:1.35;padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom,0px))}footer a{color:inherit}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<section id="login" hidden>
+  <img class="logo" src="logo.png" alt="PokéPOS" width="720" height="592">
+  <div class="card"><input id="email" type="email" placeholder="E-mail" autocomplete="username" inputmode="email" style="margin-bottom:.6rem">
+  <input id="senha" type="password" placeholder="Senha" autocomplete="current-password">
+  <p class="err" id="lerr"></p><button class="btn" id="entrar" style="width:100%;margin-top:.8rem">Entrar</button></div>
+</section>
+
+<div id="app" hidden>
+  <header><span class="brand"><img src="icon-192.png" alt="" width="38" height="38"><b>PokéPOS</b></span><button id="sair">Sair</button></header>
+  <main>
+    <section id="t-estoque"></section>
+    <section id="t-areceber" hidden></section>
+    <section id="t-caixa" hidden></section>
+  </main>
+  <nav><button data-tab="estoque" class="on">Estoque</button><button data-tab="areceber">À Receber<i id="nrec" hidden></i></button><button data-tab="caixa">Caixa</button></nav>
+  <footer aria-label="Informações do site">
+      <b>PokéPOS</b><br>Sistema privado de estoque, entregas e caixa da PokéBottons.<br>
+      Versão: 1.1 · Lançamento 2026 · © 2026 Ruan Oliveira Lima · <span class="nw"><a href="https://www.instagram.com/ruanoliveiralima_/" target="_blank" rel="me noopener">Instagram do autor</a></span> · <span class="nw">Licença: <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" target="_blank" rel="noopener license">CC BY-SA 4.0</a></span>
+    </footer>
+</div>
+
+<dialog id="dlg"></dialog>
+
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s), brl=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cod=n=>{const s=String(n).padStart(9,'0');return s.slice(0,3)+'-'+s.slice(3,6)+'-'+s.slice(6)};
+let aba='estoque', folhaAberta=null;
+const pag={};
+function paginar(sec){
+  const g=sec.querySelector('.grid');if(!g)return;
+  sec.querySelector('.pg')?.remove();
+  const cards=[...g.children].filter(c=>c.classList.contains('card')),k=aba+'|'+folhaAberta;
+  if(!cards.length)return;
+  const pg=document.createElement('div');pg.className='pg';g.after(pg);
+  const tot=cards.length,p=Math.max(0,Math.min(pag[k]||0,tot-1));pag[k]=p;
+  cards.forEach((c,i)=>c.hidden=i!==p);
+  pg.innerHTML=tot>1?`<button class="btn s sm" data-p="-1" ${p?'':'disabled'}>\u2039 Anterior</button><b>${p+1} / ${tot}</b><button class="btn s sm" data-p="1" ${p<tot-1?'':'disabled'}>Pr\u00f3xima \u203a</button>`:'';
+  pg.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{pag[k]=p+Number(b.dataset.p);paginar(sec)});
+}
+
+/* ---------- Supabase (sem servidor): login por e-mail/senha + banco com RLS ---------- */
+const CFG=window.POKE_CONFIG||{}, SB=String(CFG.SUPABASE_URL||'').replace(/\/+$/,''), CHAVE=String(CFG.SUPABASE_CHAVE||'');
+const K_SESSAO='pokepos_sessao', K_EMAIL='pokepos_email';
+class ErroApi extends Error{constructor(m,status){super(m);this.status=status}}
+const espera=ms=>new Promise(r=>setTimeout(r,ms));
+const lerSessao=()=>{try{return JSON.parse(localStorage.getItem(K_SESSAO))}catch(e){return null}};
+const gravarSessao=s=>{try{s?localStorage.setItem(K_SESSAO,JSON.stringify(s)):localStorage.removeItem(K_SESSAO)}catch(e){}};
+const sessaoDe=d=>({access:d.access_token,refresh:d.refresh_token,exp:d.expires_at?d.expires_at*1000:Date.now()+(d.expires_in||3600)*1000});
+const configurado=()=>SB&&CHAVE&&!/COLE|SEU-PROJETO/i.test(SB+CHAVE);
+const inteiro=(v,min,max)=>{const n=Number(v);return v!==''&&v!==null&&Number.isInteger(n)&&n>=min&&n<=max?n:null};
+function dinheiro(v){
+  let s=typeof v==='string'?v.trim():v;
+  if(typeof s==='string'){if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');s=Number(s)}
+  if(typeof s!=='number'||!Number.isFinite(s))return null;
+  s=Math.round(s*100)/100;return s>0&&s<=99999999.99?s.toFixed(2):null;
+}
+const texto=(v,max=200)=>{const t=typeof v==='string'?v.trim():'';return t.length>0&&t.length<=max?t:null};
+
+let renovando=null;
+async function renovar(refresh){
+  const r=await fetch(SB+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:CHAVE,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refresh})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||!d.access_token){if(r.status<500)gravarSessao(null);throw new ErroApi('',r.status<500?401:r.status)}
+  const s=sessaoDe(d);gravarSessao(s);return s;
+}
+async function token(forcar){
+  const s=lerSessao();if(!s)throw new ErroApi('',401);
+  if(!forcar&&s.exp-60000>Date.now())return s.access;
+  renovando=renovando||renovar(s.refresh).finally(()=>{renovando=null});
+  return (await renovando).access;
+}
+function erroDe(status,d){
+  const c=d&&d.code,m=d&&d.message;
+  if(status===401||c==='PGRST301'||c==='PGRST303')return new ErroApi('',401);
+  if(c==='23505')return new ErroApi('Esse número já está cadastrado.',409);
+  if(c==='23503')return new ErroApi('Folha não encontrada.',404);
+  if(c==='P0001')return new ErroApi(m||'Operação não permitida.',409);
+  if(c==='23514'||c==='22003'||c==='22P02')return new ErroApi('Valor inválido.',400);
+  if(c==='42501')return new ErroApi('Sem permissão. Entre novamente.',403);
+  console.error(status,d);return new ErroApi('Erro interno. Tente novamente.',500);
+}
+async function rest(metodo,caminho,corpo,extra,jaTentou){
+  const tk=await token(false);
+  const r=await fetch(SB+'/rest/v1'+caminho,{method:metodo,headers:{apikey:CHAVE,Authorization:'Bearer '+tk,'Content-Type':'application/json',...(extra||{})},body:corpo===undefined?undefined:JSON.stringify(corpo)});
+  const d=r.status===204?null:await r.json().catch(()=>null);
+  if(r.status===401&&!jaTentou){await token(true);return rest(metodo,caminho,corpo,extra,true)}
+  if(!r.ok)throw erroDe(r.status,d);
+  return d;
+}
+const rpc=(fn,args)=>rest('POST','/rpc/'+fn,args||{});
+
+async function entrar(b){
+  if(!configurado())throw new ErroApi('Falta configurar o arquivo config.js (URL e chave do Supabase).');
+  const email=texto(b.email,200),senha=typeof b.senha==='string'?b.senha:'';
+  if(!email||!senha)throw new ErroApi('Informe o e-mail e a senha.');
+  const r=await fetch(SB+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:CHAVE,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||!d.access_token){await espera(1000);throw new ErroApi(r.status===400?'E-mail ou senha incorretos.':'Não foi possível entrar. Tente novamente.',r.status)}
+  gravarSessao(sessaoDe(d));try{localStorage.setItem(K_EMAIL,email)}catch(e){}
+  return {ok:true};
+}
+async function sair(){
+  const s=lerSessao();gravarSessao(null);
+  if(s&&configurado())await fetch(SB+'/auth/v1/logout',{method:'POST',headers:{apikey:CHAVE,Authorization:'Bearer '+s.access}}).catch(()=>{});
+  return {ok:true};
+}
+
+/* mesmas rotas de antes: o resto do app não mudou */
+async function rota(m,p,b){
+  let x;
+  if(m==='POST'&&p==='/login')return entrar(b);
+  if(m==='POST'&&p==='/logout')return sair();
+  if(m==='GET'&&p==='/sessao'){if(!configurado())throw new ErroApi('',401);await token(false);return {ok:true}}
+
+  if(m==='GET'&&p==='/folhas')return (await rpc('pos_folhas'))||[];
+  if(m==='POST'&&p==='/folhas'){
+    const n=inteiro(b.numero,0,999999999);if(n===null)throw new ErroApi('Número da folha inválido (0 a 999999999).');
+    await rest('POST','/folhas',{numero:n});return {ok:true};
+  }
+  if((x=p.match(/^\/folhas\/(\d+)$/))&&m==='DELETE'){
+    const r=await rest('DELETE','/folhas?numero=eq.'+x[1],undefined,{Prefer:'return=representation'});
+    if(!r||!r.length)throw new ErroApi('Folha não encontrada.',404);return {ok:true};
+  }
+  if((x=p.match(/^\/folhas\/(\d+)\/bottons$/))){
+    const f=Number(x[1]);
+    if(m==='GET')return (await rpc('pos_bottons',{p_folha:f}))||[];
+    if(m==='POST'){
+      const n=inteiro(b.numero,0,99);if(n===null)throw new ErroApi('Número do botton inválido (0 a 99).');
+      await rest('POST','/bottons',{folha:f,numero:n});return {ok:true};
+    }
+  }
+  if((x=p.match(/^\/folhas\/(\d+)\/bottons\/(\d+)$/))&&m==='DELETE'){
+    const r=await rest('DELETE','/bottons?folha=eq.'+x[1]+'&numero=eq.'+x[2],undefined,{Prefer:'return=representation'});
+    if(!r||!r.length)throw new ErroApi('Botton não encontrado.',404);return {ok:true};
+  }
+  if((x=p.match(/^\/folhas\/(\d+)\/bottons\/(\d+)\/entregar$/))&&m==='POST'){
+    const preco=dinheiro(b.preco);if(!preco)throw new ErroApi('Informe o preço de venda.');
+    await rpc('entregar',{p_folha:Number(x[1]),p_botton:Number(x[2]),p_preco:preco,p_a_receber:b.a_receber===true});return {ok:true};
+  }
+  if(m==='GET'&&p==='/a-receber')return (await rpc('pos_a_receber'))||[];
+  if((x=p.match(/^\/a-receber\/(\d+)\/(\d+)\/receber$/))&&m==='POST'){
+    await rpc('receber',{p_folha:Number(x[1]),p_botton:Number(x[2])});return {ok:true};
+  }
+  if(m==='GET'&&p==='/caixa'){
+    const d=await rpc('pos_caixa',{p_limite:100});return {totais:d?.totais||{},historico:d?.historico||[]};
+  }
+  if(m==='POST'&&(p==='/caixa/custear'||p==='/caixa/investir')){
+    const valor=dinheiro(b.valor),desc=texto(b.descricao);
+    if(!valor)throw new ErroApi('Informe um valor válido.');
+    if(!desc)throw new ErroApi('A descrição é obrigatória.');
+    await rpc(p==='/caixa/custear'?'custear':'investir',{p_valor:valor,p_descricao:desc});return {ok:true};
+  }
+  throw new ErroApi('Rota não encontrada.',404);
+}
+async function api(m,p,b){
+  try{return await rota(m,p,b||{})}
+  catch(e){
+    if(e.status===401&&p!=='/login'){mostrarLogin();throw new Error('')}
+    if(e instanceof ErroApi)throw e;
+    throw new Error('Sem conexão. Tente novamente.');
+  }
+}
+const falha=e=>{if(e.message)alert(e.message)};
+function mostrarLogin(){$('#app').hidden=true;$('#login').hidden=false;try{$('#email').value=$('#email').value||localStorage.getItem(K_EMAIL)||''}catch(e){}($('#email').value?$('#senha'):$('#email')).focus()}
+async function iniciar(){
+  try{await api('GET','/sessao');$('#login').hidden=true;$('#app').hidden=false;trocar(aba)}catch(e){mostrarLogin()}
+}
+$('#entrar').onclick=async()=>{
+  $('#lerr').textContent='';
+  try{await api('POST','/login',{email:$('#email').value,senha:$('#senha').value});$('#senha').value='';iniciar()}catch(e){$('#lerr').textContent=e.message}
+};
+$('#senha').onkeydown=$('#email').onkeydown=e=>{if(e.key==='Enter')$('#entrar').click()};
+$('#sair').onclick=async()=>{await api('POST','/logout',{}).catch(()=>{});mostrarLogin()};
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>trocar(b.dataset.tab));
+function trocar(t){
+  aba=t;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  ['estoque','areceber','caixa'].forEach(x=>$('#t-'+x).hidden=x!==t);
+  ({estoque:folhaAberta===null?listarFolhas:abrirFolha,areceber:listarReceber,caixa:mostrarCaixa})[t](folhaAberta);
+  contarReceber();
+}
+async function contarReceber(){try{const l=await api('GET','/a-receber');$('#nrec').hidden=!l.length;$('#nrec').textContent=l.length}catch(e){}}
+
+/* ---------- Diálogo ---------- */
+function dialogo(html,ok){
+  const d=$('#dlg');d.innerHTML=html;d.showModal();
+  d.querySelector('[data-x]').onclick=()=>d.close();
+  d.querySelector('form').onsubmit=async e=>{e.preventDefault();try{await ok(new FormData(e.target));d.close()}catch(er){falha(er)}};
+}
+
+/* ---------- ESTOQUE · folhas ---------- */
+async function listarFolhas(){
+  folhaAberta=null;const el=$('#t-estoque');
+  const l=await api('GET','/folhas').catch(falha)||[];
+  el.innerHTML=`<h2>Folhas</h2>
+  <form class="card row" id="nf"><input name="n" type="number" inputmode="numeric" min="0" max="999999999" placeholder="Nº da folha (0 = Lote 1)" required style="flex:1;min-width:0"><button class="btn">Cadastrar</button></form>
+  <div class="grid">${l.map(f=>`<div class="card"><div class="row sp"><b>Folha ${cod(f.numero)}</b><small>Lote: ${Number(f.lote).toLocaleString('pt-BR')}</small></div>
+  <p class="m" style="margin:.3rem 0 .7rem"><span class="${f.bottons>0?(f.entregues===f.bottons?'ok':'bad'):''}">${f.bottons} botton(s) · ${f.entregues} entregue(s)</span></p>
+  <div class="row"><button class="btn sm" data-abrir="${f.numero}">Abrir</button><button class="btn sm x" data-delf="${f.numero}">Excluir</button></div></div>`).join('')||'<p class="m">Nenhuma folha cadastrada.</p>'}</div>`;
+  $('#nf').onsubmit=async e=>{e.preventDefault();try{await api('POST','/folhas',{numero:e.target.n.value});listarFolhas()}catch(er){falha(er)}};
+  el.querySelectorAll('[data-abrir]').forEach(b=>b.onclick=()=>abrirFolha(b.dataset.abrir));
+  el.querySelectorAll('[data-delf]').forEach(b=>b.onclick=async()=>{if(confirm('Excluir a folha '+cod(b.dataset.delf)+' e seus bottons não entregues?'))try{await api('DELETE','/folhas/'+b.dataset.delf);listarFolhas()}catch(er){falha(er)}});
+  paginar(el);
+}
+
+/* ---------- ESTOQUE · bottons ---------- */
+async function abrirFolha(f){
+  folhaAberta=f;const el=$('#t-estoque');
+  const l=await api('GET','/folhas/'+f+'/bottons').catch(falha)||[];
+  el.innerHTML=`<div class="row sp"><button class="btn sm s" id="voltar">← Folhas</button><b>Folha ${cod(f)}</b></div>
+  <form class="card row" id="nb" style="margin-top:.8rem"><input name="n" type="number" inputmode="numeric" min="0" max="99" placeholder="Nº do botton (0 a 99)" required style="flex:1;min-width:0"><button class="btn">Cadastrar</button></form>
+  <div class="grid">${l.map(b=>`<div class="card"><div class="row sp"><b>${esc(b.pid)}</b><small>Item: ${b.item}</small></div>
+  <p class="m" style="margin:.3rem 0">Feito em ${esc(b.fabricado_em)}</p>
+  ${b.status==='estoque'?'<p class="tag" style="margin:.2rem 0 .6rem">falta entregar!</p><div class="row"><button class="btn sm" data-ent="'+b.numero+'">ENTREGAR</button><button class="btn sm x" data-delb="'+b.numero+'">Excluir</button></div>'
+  :`<p style="margin:.2rem 0">Entregue em ${esc(b.entregue_em)} · ${brl(b.preco_venda)}</p><p class="${b.status==='recebido'?'ok':'tag'}" style="margin:0">${b.status==='recebido'?'Recebido':'A receber'}</p>`}</div>`).join('')||'<p class="m">Nenhum botton nesta folha.</p>'}</div>`;
+  $('#voltar').onclick=listarFolhas;
+  $('#nb').onsubmit=async e=>{e.preventDefault();try{await api('POST','/folhas/'+f+'/bottons',{numero:e.target.n.value});abrirFolha(f)}catch(er){falha(er)}};
+  el.querySelectorAll('[data-delb]').forEach(b=>b.onclick=async()=>{if(confirm('Excluir este botton?'))try{await api('DELETE','/folhas/'+f+'/bottons/'+b.dataset.delb);abrirFolha(f)}catch(er){falha(er)}});
+  el.querySelectorAll('[data-ent]').forEach(b=>b.onclick=()=>dialogo(
+    `<form method="dialog"><h2>Entregar botton ${String(b.dataset.ent).padStart(2,'0')}</h2><input name="preco" inputmode="decimal" placeholder="Preço de venda (R$)" required>
+    <label class="c"><input type="checkbox" name="rec"> Ainda vou receber o valor</label>
+    <div class="row"><button class="btn">Entregar</button><button type="button" class="btn s" data-x>Cancelar</button></div></form>`,
+    async fd=>{await api('POST','/folhas/'+f+'/bottons/'+b.dataset.ent+'/entregar',{preco:fd.get('preco'),a_receber:fd.get('rec')==='on'});abrirFolha(f);contarReceber()}));
+  paginar(el);
+}
+
+/* ---------- À RECEBER ---------- */
+async function listarReceber(){
+  const el=$('#t-areceber');const l=await api('GET','/a-receber').catch(falha)||[];
+  el.innerHTML=`<h2>À Receber</h2><div class="grid">${l.map(b=>`<div class="card"><div class="row sp"><b>${esc(b.pid)}</b><b>${brl(b.preco_venda)}</b></div>
+  <p class="m" style="margin:.3rem 0 .6rem">Entregue em ${esc(b.entregue_em)}</p><button class="btn g sm" data-rec="${b.folha}/${b.botton}">Recebi!</button></div>`).join('')||'<p class="m">Nada a receber.</p>'}</div>`;
+  el.querySelectorAll('[data-rec]').forEach(b=>b.onclick=async()=>{try{await api('POST','/a-receber/'+b.dataset.rec+'/receber',{});listarReceber();contarReceber()}catch(er){falha(er)}});
+  paginar(el);
+}
+
+/* ---------- CAIXA ---------- */
+const nomes={entrega:'Entrega',recebimento:'Recebimento',custeio:'Custeio',investimento:'Investimento'};
+async function mostrarCaixa(){
+  const el=$('#t-caixa');const d=await api('GET','/caixa').catch(falha);if(!d)return;
+  const t=d.totais||{};
+  el.innerHTML=`<h2>Caixa</h2><div class="stats"><div class="card"><small>Bottons</small><b>${t.qtd_bottons||0}</b></div><div class="card"><small>Custo</small><b>${brl(t.custo)}</b></div><div class="card"><small>Lucro</small><b>${brl(t.lucro)}</b></div></div>
+  <div class="row" style="margin:.8rem 0"><button class="btn" data-mov="custear" style="flex:1">Custear</button><button class="btn g" data-mov="investir" style="flex:1">Investir</button></div>
+  <h2>Histórico</h2><div class="grid">${d.historico.map(h=>{
+    const v=h.tipo==='recebimento'?`<small>Custo <span class="pos">+${brl(h.custo_delta)}</span> · Lucro <span class="pos">+${brl(h.lucro_delta)}</span></small>`
+      :h.tipo==='custeio'?`<span class="neg">−${brl(h.valor)}</span>`:h.tipo==='investimento'?`<span class="pos">+${brl(h.valor)}</span>`:'';
+    return `<div class="card"><div class="row sp"><b>${nomes[h.tipo]}</b><b>${h.tipo==='entrega'||h.tipo==='recebimento'?brl(h.valor):v}</b></div>
+    <small class="m">${esc(h.quando)}${h.pid?' · '+esc(h.pid):''}${h.descricao?' · '+esc(h.descricao):''}</small>${h.tipo==='recebimento'?'<div>'+v+'</div>':''}</div>`}).join('')||'<p class="m">Sem movimentações.</p>'}</div>`;
+  el.querySelectorAll('[data-mov]').forEach(b=>b.onclick=()=>{const c=b.dataset.mov==='custear';dialogo(
+    `<form method="dialog"><h2>${c?'Custear':'Investir'}</h2><input name="valor" inputmode="decimal" placeholder="Valor (R$)" required style="margin-bottom:.6rem">
+    <input name="descricao" maxlength="200" placeholder="Descrição (obrigatória)" required>
+    <div class="row" style="margin-top:.8rem"><button class="btn ${c?'':'g'}">${c?'Pegar':'Investir'}</button><button type="button" class="btn s" data-x>Cancelar</button></div></form>`,
+    async fd=>{await api('POST','/caixa/'+b.dataset.mov,{valor:fd.get('valor'),descricao:fd.get('descricao')});mostrarCaixa()})});
+  paginar(el);
+}
+iniciar();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('service-worker.js').catch(() => {}); });
+}
+</script>
+</body>
+</html>
