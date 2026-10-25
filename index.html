@@ -14,9 +14,9 @@
 <meta name="license" content="CC BY-SA 4.0 — Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional">
 <meta name="generator" content="PokéPOS">
 <meta name="application-name" content="PokéPOS">
-<meta name="version" content="1.1">
+<meta name="version" content="1.2">
 <meta name="date" content="2026-10-06">
-<meta name="revised" content="2026-10-07T23:09:46-03:00">
+<meta name="revised" content="2026-10-25T19:40:00-03:00">
 <meta name="category" content="BusinessApplication">
 <meta name="subject" content="Estoque, entregas e caixa da PokéBottons">
 <meta name="language" content="pt-BR">
@@ -77,7 +77,7 @@
 <meta name="twitter:image:alt" content="Logo do PokéPOS: uma Poké Bola ao lado de um monitor com carrinho de compras e gráfico.">
 <style>
   .nw{ white-space:nowrap; }
-:root{--r:#E10F1E;--rd:#B01020;--k:#0c0b0c;--bg:#f4f4f6;--c:#fff;--b:#e2e2e8;--m:#6b6b76;--ok:#12803a;--w:#b45309;box-sizing:border-box}
+:root{--r:#E10F1E;--k:#0c0b0c;--bg:#f4f4f6;--c:#fff;--b:#e2e2e8;--m:#6b6b76;--ok:#12803a;--w:#b45309;box-sizing:border-box}
 @media(prefers-color-scheme:dark){:root{--bg:#121214;--c:#1c1c20;--b:#2d2d34;--k:#f2f2f4;--m:#9a9aa6;--ok:#4ade80;--w:#fbbf24}}
 *,*::before,*::after{box-sizing:inherit}html,body{height:100%;overflow:hidden}#app{display:flex;flex-direction:column;height:100dvh}.pg{display:flex;justify-content:center;align-items:center;gap:.8rem;margin:.5rem 0 0}.btn:disabled{opacity:.4}
 html,body{margin:0}body{font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--k)}
@@ -124,7 +124,7 @@ footer{text-align:left;background:var(--c);border-top:1px solid var(--b);color:v
   <nav><button data-tab="estoque" class="on">Estoque</button><button data-tab="areceber">À Receber<i id="nrec" hidden></i></button><button data-tab="caixa">Caixa</button></nav>
   <footer aria-label="Informações do site">
       <b>PokéPOS</b><br>Sistema privado de estoque, entregas e caixa da PokéBottons.<br>
-      Versão: 1.1 · Lançamento 2026 · © 2026 Ruan Oliveira Lima · <span class="nw"><a href="https://www.instagram.com/ruanoliveiralima_/" target="_blank" rel="me noopener">Instagram do autor</a></span> · <span class="nw">Licença: <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" target="_blank" rel="noopener license">CC BY-SA 4.0</a></span>
+      Versão: 1.2 · Lançamento 2026 · © 2026 Ruan Oliveira Lima · <span class="nw"><a href="https://www.instagram.com/ruanoliveiralima_/" target="_blank" rel="me noopener">Instagram do autor</a></span> · <span class="nw">Licença: <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" target="_blank" rel="noopener license">CC BY-SA 4.0</a></span>
     </footer>
 </div>
 
@@ -216,7 +216,7 @@ async function sair(){
   return {ok:true};
 }
 
-/* mesmas rotas de antes: o resto do app não mudou */
+/* rotas do app (cada uma chama o Supabase) */
 async function rota(m,p,b){
   let x;
   if(m==='POST'&&p==='/login')return entrar(b);
@@ -237,7 +237,8 @@ async function rota(m,p,b){
     if(m==='GET')return (await rpc('pos_bottons',{p_folha:f}))||[];
     if(m==='POST'){
       const n=inteiro(b.numero,0,99);if(n===null)throw new ErroApi('Número do botton inválido (0 a 99).');
-      await rest('POST','/bottons',{folha:f,numero:n});return {ok:true};
+      const arte=texto(b.arte,100);if(!arte)throw new ErroApi('Informe a arte do botton.');
+      await rest('POST','/bottons',{folha:f,numero:n,arte});return {ok:true};
     }
   }
   if((x=p.match(/^\/folhas\/(\d+)\/bottons\/(\d+)$/))&&m==='DELETE'){
@@ -320,13 +321,14 @@ async function abrirFolha(f){
   folhaAberta=f;const el=$('#t-estoque');
   const l=await api('GET','/folhas/'+f+'/bottons').catch(falha)||[];
   el.innerHTML=`<div class="row sp"><button class="btn sm s" id="voltar">← Folhas</button><b>Folha ${cod(f)}</b></div>
-  <form class="card row" id="nb" style="margin-top:.8rem"><input name="n" type="number" inputmode="numeric" min="0" max="99" placeholder="Nº do botton (0 a 99)" required style="flex:1;min-width:0"><button class="btn">Cadastrar</button></form>
+  <form class="card row" id="nb" style="margin-top:.8rem"><input name="n" type="number" inputmode="numeric" min="0" max="99" placeholder="Nº do botton (0 a 99)" required style="flex:1 1 100%;min-width:0"><input name="arte" type="text" maxlength="100" placeholder="Arte (obrigatória)" required autocomplete="off" style="flex:1;min-width:0"><button class="btn">Cadastrar</button></form>
   <div class="grid">${l.map(b=>`<div class="card"><div class="row sp"><b>${esc(b.pid)}</b><small>Item: ${b.item}</small></div>
+  <p style="margin:.3rem 0 0">Arte: <b>${esc(b.arte||'—')}</b></p>
   <p class="m" style="margin:.3rem 0">Feito em ${esc(b.fabricado_em)}</p>
   ${b.status==='estoque'?'<p class="tag" style="margin:.2rem 0 .6rem">falta entregar!</p><div class="row"><button class="btn sm" data-ent="'+b.numero+'">ENTREGAR</button><button class="btn sm x" data-delb="'+b.numero+'">Excluir</button></div>'
   :`<p style="margin:.2rem 0">Entregue em ${esc(b.entregue_em)} · ${brl(b.preco_venda)}</p><p class="${b.status==='recebido'?'ok':'tag'}" style="margin:0">${b.status==='recebido'?'Recebido':'A receber'}</p>`}</div>`).join('')||'<p class="m">Nenhum botton nesta folha.</p>'}</div>`;
   $('#voltar').onclick=listarFolhas;
-  $('#nb').onsubmit=async e=>{e.preventDefault();try{await api('POST','/folhas/'+f+'/bottons',{numero:e.target.n.value});abrirFolha(f)}catch(er){falha(er)}};
+  $('#nb').onsubmit=async e=>{e.preventDefault();try{await api('POST','/folhas/'+f+'/bottons',{numero:e.target.n.value,arte:e.target.arte.value});abrirFolha(f)}catch(er){falha(er)}};
   el.querySelectorAll('[data-delb]').forEach(b=>b.onclick=async()=>{if(confirm('Excluir este botton?'))try{await api('DELETE','/folhas/'+f+'/bottons/'+b.dataset.delb);abrirFolha(f)}catch(er){falha(er)}});
   el.querySelectorAll('[data-ent]').forEach(b=>b.onclick=()=>dialogo(
     `<form method="dialog"><h2>Entregar botton ${String(b.dataset.ent).padStart(2,'0')}</h2><input name="preco" inputmode="decimal" placeholder="Preço de venda (R$)" required>

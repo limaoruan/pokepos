@@ -1,7 +1,7 @@
 // PokéPOS · service worker (instalação + abertura offline do app)
 // Rede primeiro: sempre busca a versão nova e só usa o cache se estiver sem conexão.
 // Só arquivos do próprio site são guardados; as chamadas ao Supabase (outro endereço) nunca passam por aqui.
-const CACHE = 'pokepos-v1.1.0';
+const CACHE = 'pokepos-v1.2.0';
 const RAIZ = self.registration.scope; // funciona em qualquer subpasta (GitHub Pages)
 const SHELL = [
   './',
