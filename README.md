@@ -31,7 +31,7 @@ Tem 3 abas:
 3. **Entregar**: informe o preço de venda. Marque "Ainda vou receber o valor" se ainda não foi pago.
 4. **À Receber**: toque em **Recebi!** quando o pagamento chegar.
 5. **Caixa**: acompanhe Bottons, Custo e Lucro. Use **Investir** para colocar dinheiro no Custo e **Custear** para retirar.
-   - O histórico mostra os últimos 100 eventos, de 4 tipos: Entrega, Recebimento, Custeio e Investimento.
+   - O histórico mostra os últimos 100 eventos de cada tipo (até 400 no total): Entrega, Recebimento, Custeio e Investimento.
    - O Recebimento mostra quanto foi para o Custo e quanto foi para o Lucro. Custeio e Investimento mostram a descrição.
 
 **Listas:** em todas as listas (folhas, bottons, À Receber e histórico) aparece um card por vez. Navegue com **Anterior** e **Próxima**, com o contador (ex.: 2 / 7).

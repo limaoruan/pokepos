@@ -210,12 +210,15 @@ language sql stable set search_path = public as $$
   select json_build_object(
     'totais', (select row_to_json(x) from (select qtd_bottons, custo, lucro from caixa_totais) x),
     'historico', (
-      select coalesce(json_agg(t), '[]'::json) from (
+      select coalesce(json_agg(t order by t.id desc), '[]'::json) from (
         select id, tipo, valor, custo_delta, lucro_delta, descricao,
                case when folha is null then null else pid_fmt(folha, botton) end as pid,
                to_char(criado_em at time zone 'America/Sao_Paulo', 'DD/MM/YYYY HH24:MI:SS') as quando
-          from caixa_eventos order by id desc
-         limit least(greatest(coalesce(p_limite, 100), 1), 500)
+          from (
+            select e.*, row_number() over (partition by e.tipo order by e.id desc) as n
+              from caixa_eventos e
+          ) e
+         where n <= least(greatest(coalesce(p_limite, 100), 1), 500)  -- limite POR TIPO
       ) t
     )
   )
