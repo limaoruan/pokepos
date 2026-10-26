@@ -101,7 +101,7 @@ where entregue_em is not null and recebido_em is null
 order by entregue_em;
 
 -- ---------- 6. Operações (cada uma é uma transação única) ----------
--- Regra: 53,50% do valor recebido -> Custo ; 46,50% -> Lucro
+-- Regra: 53,50% do valor recebido -> Custo (arredondado SEMPRE para cima, ex.: 2,675 -> 2,68) ; o restante -> Lucro (preço - custo)
 
 create or replace function entregar(p_folha bigint, p_botton smallint, p_preco numeric, p_a_receber boolean)
 returns void language plpgsql set search_path = public as $$
@@ -122,7 +122,7 @@ begin
   values ('entrega', agora, p_folha, p_botton, p_preco);
 
   if not p_a_receber then
-    v_custo := round(p_preco * 0.535, 2);
+    v_custo := ceil(p_preco * 0.535 * 100) / 100;
     insert into caixa_eventos (tipo, criado_em, folha, botton, valor, custo_delta, lucro_delta)
     values ('recebimento', agora, p_folha, p_botton, p_preco, v_custo, p_preco - v_custo);
   end if;
@@ -143,7 +143,7 @@ begin
     raise exception 'Botton não está pendente de recebimento.';
   end if;
 
-  v_custo := round(v_preco * 0.535, 2);
+  v_custo := ceil(v_preco * 0.535 * 100) / 100;
   insert into caixa_eventos (tipo, criado_em, folha, botton, valor, custo_delta, lucro_delta)
   values ('recebimento', agora, p_folha, p_botton, v_preco, v_custo, v_preco - v_custo);
 end $$;
