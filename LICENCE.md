@@ -1,4 +1,4 @@
-# Licença — PokéPOS 1.2
+# Licença — PokéPOS 1.3
 
 **PokéPOS — Sistema privado de estoque, entregas e caixa da PokéBottons** © 2026 Ruan Oliveira Lima.
 
@@ -32,7 +32,7 @@ Atribuição sugerida:
 - Código-fonte: `index.html`, `config.js`, `service-worker.js`
 - Script SQL: `setup_supabase.sql`
 - Ativos visuais originais: `logo.png`, `og-image.jpg`, `favicon.ico`, `favicon-16.png`, `favicon-32.png`, `favicon-48.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`
-- Configuração e publicação: `manifest.webmanifest`, `robots.txt`, `.nojekyll`, `.github/workflows/manter-supabase-ativo.yml`
+- Configuração e publicação: `manifest.webmanifest`, `robots.txt`, `.nojekyll`
 - Documentação: `README.md`, `LICENCE.md`
 
 ---
@@ -44,5 +44,5 @@ Este projeto utiliza serviços e bibliotecas de terceiros com suas próprias lic
 | Serviço / Biblioteca | Uso | Licença / Termos |
 |---|---|---|
 | [Supabase](https://supabase.com) | Banco de dados e autenticação (login), acessados direto pela API REST e de autenticação | [Apache 2.0](https://github.com/supabase/supabase/blob/master/LICENSE) |
-| [GitHub Pages e GitHub Actions](https://github.com) | Hospedagem do site (Pages) e consulta agendada que mantém o Supabase ativo (Actions) | [Termos de serviço do GitHub](https://docs.github.com/pt/site-policy/github-terms/github-terms-of-service) |
+| [GitHub Pages](https://github.com) | Hospedagem do site (Pages) | [Termos de serviço do GitHub](https://docs.github.com/pt/site-policy/github-terms/github-terms-of-service) |
 | [Claude (Anthropic)](https://www.anthropic.com) | Assistência com IA no desenvolvimento | [Política de Uso Anthropic](https://www.anthropic.com/legal/aup) |

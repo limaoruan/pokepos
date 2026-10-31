@@ -28,7 +28,7 @@ create table folhas (
 create table bottons (
   folha        bigint   not null references folhas(numero) on delete cascade,
   numero       smallint not null check (numero between 0 and 99),
-  arte         text check (arte is null or length(btrim(arte)) between 1 and 100),  -- arte do botton (obrigatória no cadastro)
+  arte         text check (arte is null or length(btrim(arte)) between 1 and 100),  -- arte do botton (opcional; pode ser informada na entrega)
   fabricado_em timestamptz not null default now(),   -- registro de fabricação
   entregue_em  timestamptz,                          -- registro de entrega
   preco_venda  numeric(10,2) check (preco_venda > 0),
@@ -38,21 +38,6 @@ create table bottons (
          or (entregue_em is not null and preco_venda is not null)),
   check (recebido_em is null or entregue_em is not null)
 );
-
--- Exige a arte em todo botton novo (botton antigo sem arte continua válido)
-create or replace function exigir_arte() returns trigger
-language plpgsql set search_path = public as $$
-begin
-  if length(btrim(coalesce(new.arte, ''))) = 0 then
-    raise exception 'Informe a arte do botton.';
-  end if;
-  new.arte := btrim(new.arte);
-  return new;
-end $$;
-
-create trigger trg_exigir_arte
-before insert on bottons
-for each row execute function exigir_arte();
 
 -- Bloqueia exclusão de botton já entregue (e, por cascata, de folha que tenha algum)
 create or replace function bloquear_exclusao_entregue() returns trigger
@@ -103,16 +88,19 @@ order by entregue_em;
 -- ---------- 6. Operações (cada uma é uma transação única) ----------
 -- Regra: 53,50% do valor recebido -> Custo (arredondado SEMPRE para cima, ex.: 2,675 -> 2,68) ; o restante -> Lucro (preço - custo)
 
-create or replace function entregar(p_folha bigint, p_botton smallint, p_preco numeric, p_a_receber boolean)
+-- p_arte é opcional: se vier preenchida, grava/atualiza a arte do botton na entrega.
+create or replace function entregar(p_folha bigint, p_botton smallint, p_preco numeric, p_a_receber boolean, p_arte text default null)
 returns void language plpgsql set search_path = public as $$
 declare
   agora timestamptz := now();
   v_custo numeric(10,2);
+  v_arte text := nullif(btrim(coalesce(p_arte, '')), '');
 begin
   update bottons
      set entregue_em = agora,
          preco_venda = p_preco,
-         recebido_em = case when p_a_receber then null else agora end
+         recebido_em = case when p_a_receber then null else agora end,
+         arte        = coalesce(v_arte, arte)
    where folha = p_folha and numero = p_botton and entregue_em is null;
   if not found then
     raise exception 'Botton inexistente ou já entregue.';
@@ -126,6 +114,25 @@ begin
     insert into caixa_eventos (tipo, criado_em, folha, botton, valor, custo_delta, lucro_delta)
     values ('recebimento', agora, p_folha, p_botton, p_preco, v_custo, p_preco - v_custo);
   end if;
+end $$;
+
+-- Criar folha: o número é sempre o seguinte ao maior já cadastrado (0 se não houver nenhuma).
+-- Cria a folha com p_qtd bottons (itens 1 a p_qtd, números 0 a p_qtd-1), sem arte.
+create or replace function criar_folha(p_qtd int)
+returns void language plpgsql set search_path = public as $$
+declare v_num bigint;
+begin
+  if p_qtd is null or p_qtd < 1 or p_qtd > 100 then
+    raise exception 'Informe de 1 a 100 bottons.';
+  end if;
+  perform pg_advisory_xact_lock(2);   -- evita duas folhas com o mesmo número ao mesmo tempo
+  select coalesce(max(numero) + 1, 0) into v_num from folhas;
+  if v_num > 999999999 then
+    raise exception 'Limite de folhas atingido.';
+  end if;
+  insert into folhas (numero) values (v_num);
+  insert into bottons (folha, numero)
+  select v_num, g::smallint from generate_series(0, p_qtd - 1) g;
 end $$;
 
 create or replace function receber(p_folha bigint, p_botton smallint)
@@ -205,24 +212,37 @@ language sql stable set search_path = public as $$
   ) t
 $$;
 
-create or replace function pos_caixa(p_limite int default 100) returns json
+-- Caixa: totais + histórico paginado (mais recentes primeiro, todos os tipos juntos).
+-- p_limite = tamanho da página (padrão 100); p_antes = só eventos com id menor que esse (para "carregar mais").
+-- tem_mais = true quando ainda existem eventos mais antigos.
+create or replace function pos_caixa(p_limite int default 100, p_antes bigint default null) returns json
 language sql stable set search_path = public as $$
+  with lim as (
+    select least(greatest(coalesce(p_limite, 100), 1), 500) as n
+  ), pagina as (
+    select e.* from caixa_eventos e
+     where p_antes is null or e.id < p_antes
+     order by e.id desc
+     limit (select n from lim) + 1
+  )
   select json_build_object(
     'totais', (select row_to_json(x) from (select qtd_bottons, custo, lucro from caixa_totais) x),
     'historico', (
       select coalesce(json_agg(t order by t.id desc), '[]'::json) from (
-        select id, tipo, valor, custo_delta, lucro_delta, descricao,
-               case when folha is null then null else pid_fmt(folha, botton) end as pid,
-               to_char(criado_em at time zone 'America/Sao_Paulo', 'DD/MM/YYYY HH24:MI:SS') as quando
-          from (
-            select e.*, row_number() over (partition by e.tipo order by e.id desc) as n
-              from caixa_eventos e
-          ) e
-         where n <= least(greatest(coalesce(p_limite, 100), 1), 500)  -- limite POR TIPO
+        select p.id, p.tipo, p.valor, p.custo_delta, p.lucro_delta, p.descricao,
+               case when p.folha is null then null else pid_fmt(p.folha, p.botton) end as pid,
+               to_char(p.criado_em at time zone 'America/Sao_Paulo', 'DD/MM/YYYY HH24:MI:SS') as quando
+          from (select * from pagina order by id desc limit (select n from lim)) p
       ) t
-    )
+    ),
+    'tem_mais', (select count(*) > (select n from lim) from pagina)
   )
 $$;
+
+-- Ping: consulta mínima e pública, só para manter o projeto Supabase ativo (não lê nenhum dado).
+-- Chamada por uma tarefa agendada no cron-job.org (ver README, seção Manutenção).
+create or replace function ping() returns text
+language sql stable set search_path = public as $$ select 'ok'::text $$;
 
 -- ---------- 8. Segurança (RLS + permissões) ----------
 alter table folhas        enable row level security;
@@ -240,10 +260,10 @@ create policy dono_caixa_i on caixa_eventos for insert to authenticated with che
 revoke all on all tables    in schema public from anon, authenticated;
 revoke all on all sequences in schema public from anon, authenticated;
 revoke execute on function
-  pid_fmt(bigint, smallint), exigir_arte(), bloquear_exclusao_entregue(),
-  entregar(bigint, smallint, numeric, boolean), receber(bigint, smallint),
+  pid_fmt(bigint, smallint), bloquear_exclusao_entregue(),
+  entregar(bigint, smallint, numeric, boolean, text), criar_folha(int), receber(bigint, smallint),
   custear(numeric, text), investir(numeric, text),
-  pos_folhas(), pos_bottons(bigint), pos_a_receber(), pos_caixa(int)
+  pos_folhas(), pos_bottons(bigint), pos_a_receber(), pos_caixa(int, bigint), ping()
   from public, anon, authenticated;
 
 grant select, insert, update, delete on folhas, bottons to authenticated;
@@ -252,11 +272,13 @@ grant select on caixa_totais, a_receber to authenticated;
 grant usage, select on sequence caixa_eventos_id_seq to authenticated;
 
 grant execute on function pid_fmt(bigint, smallint)                          to authenticated;
-grant execute on function entregar(bigint, smallint, numeric, boolean)       to authenticated;
+grant execute on function entregar(bigint, smallint, numeric, boolean, text) to authenticated;
+grant execute on function criar_folha(int)                                   to authenticated;
 grant execute on function receber(bigint, smallint)                          to authenticated;
 grant execute on function custear(numeric, text)                             to authenticated;
 grant execute on function investir(numeric, text)                            to authenticated;
 grant execute on function pos_folhas()                                       to authenticated;
 grant execute on function pos_bottons(bigint)                                to authenticated;
 grant execute on function pos_a_receber()                                    to authenticated;
-grant execute on function pos_caixa(int)                                     to authenticated;
+grant execute on function pos_caixa(int, bigint)                             to authenticated;
+grant execute on function ping()                                             to anon, authenticated;
