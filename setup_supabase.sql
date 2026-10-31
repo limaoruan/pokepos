@@ -179,15 +179,32 @@ begin
 end $$;
 
 -- ---------- 7. Leituras do PokéPOS (já formatadas) ----------
-create or replace function pos_folhas() returns json
+-- Folhas paginadas (mais recentes primeiro, de 100 em 100). p_antes = só folhas com número menor que esse.
+-- tem_mais = true quando ainda existem folhas mais antigas.
+create or replace function pos_folhas(p_limite int default 100, p_antes bigint default null) returns json
 language sql stable set search_path = public as $$
-  select coalesce(json_agg(t), '[]'::json) from (
-    select f.numero, f.numero + 1 as lote,
-           substr(lpad(f.numero::text,9,'0'),1,3) || '-' || substr(lpad(f.numero::text,9,'0'),4,3) || '-' || substr(lpad(f.numero::text,9,'0'),7,3) as codigo,
-           count(b.numero)::int as bottons, count(b.entregue_em)::int as entregues
-      from folhas f left join bottons b on b.folha = f.numero
-     group by f.numero order by f.criada_em desc, f.numero desc
-  ) t
+  with lim as (
+    select least(greatest(coalesce(p_limite, 100), 1), 500) as n
+  ), pagina as (
+    select f.numero from folhas f
+     where p_antes is null or f.numero < p_antes
+     order by f.numero desc
+     limit (select n from lim) + 1
+  ), pg as (
+    select numero from pagina order by numero desc limit (select n from lim)
+  )
+  select json_build_object(
+    'folhas', (
+      select coalesce(json_agg(t order by t.numero desc), '[]'::json) from (
+        select f.numero, f.numero + 1 as lote,
+               substr(lpad(f.numero::text,9,'0'),1,3) || '-' || substr(lpad(f.numero::text,9,'0'),4,3) || '-' || substr(lpad(f.numero::text,9,'0'),7,3) as codigo,
+               count(b.numero)::int as bottons, count(b.entregue_em)::int as entregues
+          from pg f left join bottons b on b.folha = f.numero
+         group by f.numero
+      ) t
+    ),
+    'tem_mais', (select count(*) > (select n from lim) from pagina)
+  )
 $$;
 
 create or replace function pos_bottons(p_folha bigint) returns json
@@ -199,7 +216,7 @@ language sql stable set search_path = public as $$
            to_char(b.recebido_em  at time zone 'America/Sao_Paulo', 'DD/MM/YYYY HH24:MI:SS') as recebido_em,
            case when b.entregue_em is null then 'estoque'
                 when b.recebido_em is null then 'a_receber' else 'recebido' end as status
-      from bottons b where b.folha = p_folha order by b.fabricado_em desc, b.numero desc
+      from bottons b where b.folha = p_folha order by b.numero asc
   ) t
 $$;
 
@@ -263,7 +280,7 @@ revoke execute on function
   pid_fmt(bigint, smallint), bloquear_exclusao_entregue(),
   entregar(bigint, smallint, numeric, boolean, text), criar_folha(int), receber(bigint, smallint),
   custear(numeric, text), investir(numeric, text),
-  pos_folhas(), pos_bottons(bigint), pos_a_receber(), pos_caixa(int, bigint), ping()
+  pos_folhas(int, bigint), pos_bottons(bigint), pos_a_receber(), pos_caixa(int, bigint), ping()
   from public, anon, authenticated;
 
 grant select, insert, update, delete on folhas, bottons to authenticated;
@@ -277,7 +294,7 @@ grant execute on function criar_folha(int)                                   to 
 grant execute on function receber(bigint, smallint)                          to authenticated;
 grant execute on function custear(numeric, text)                             to authenticated;
 grant execute on function investir(numeric, text)                            to authenticated;
-grant execute on function pos_folhas()                                       to authenticated;
+grant execute on function pos_folhas(int, bigint)                            to authenticated;
 grant execute on function pos_bottons(bigint)                                to authenticated;
 grant execute on function pos_a_receber()                                    to authenticated;
 grant execute on function pos_caixa(int, bigint)                             to authenticated;

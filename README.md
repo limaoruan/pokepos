@@ -26,6 +26,7 @@ Tem 3 abas:
 ## Como usar
 1. Entre com o e-mail e a senha criados no Supabase. A sessão fica guardada no aparelho e renova sozinha, e o e-mail é lembrado; use **Sair** para encerrar.
 2. **Estoque**: cadastre a folha informando só a quantidade de bottons; o número da folha e os bottons são criados sozinhos. Abra a folha para ver os bottons.
+   - A lista mostra as 100 folhas mais recentes (maior número primeiro). Ao chegar no último card aparece o botão **Carregar mais 100**, para trazer as 100 anteriores.
    - O card da folha mostra o código, o Lote e "N botton(s) · M entregue(s)": verde quando todos foram entregues e vermelho quando falta entregar algum.
    - O card do botton mostra o PID, o Item, a arte, "Feito em" e o status. Botton não entregue mostra "falta entregar!", com os botões **ENTREGAR** e **Excluir**.
 3. **Entregar**: informe o preço de venda e, se quiser, a **arte** (opcional). Marque "Ainda vou receber o valor" se ainda não foi pago.
