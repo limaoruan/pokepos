@@ -23,7 +23,7 @@ Desde que respeite os termos desta licença.
 
 Atribuição sugerida:
 
-> Derivado do projeto PokéPOS por [Ruan Oliveira Lima](https://www.instagram.com/ruanoliveiralima_/) © 2026 — <a href="https://github.com/limaoruan/pokepos" target="_blank" rel="noopener noreferrer">https://github.com/limaoruan/pokepos</a> — <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" target="_blank" rel="license noopener noreferrer">CC-BY-SA 4.0</a>
+> Derivado do projeto PokéPOS por [Ruan Oliveira Lima](https://www.instagram.com/limaoruan/) © 2026 — <a href="https://github.com/limaoruan/pokepos" target="_blank" rel="noopener noreferrer">https://github.com/limaoruan/pokepos</a> — <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" target="_blank" rel="license noopener noreferrer">CC-BY-SA 4.0</a>
 
 ---
 

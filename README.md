@@ -64,7 +64,7 @@ O PokéPOS e o PIDgey usam o **mesmo projeto do Supabase**. Rode o setup do Pok�
 ### 4. Testar
 1. Abra o endereço e entre com o e-mail e a senha criados no Supabase.
 2. Cadastre uma folha (com a quantidade de bottons) para ver se o banco responde.
-3. Configure a tarefa do cron-job.org descrita em **Manutenção** e rode o **Test run**; ela usa a função `ping`, criada pelo `setup_supabase.sql` deste projeto.
+3. Configure o monitor do Checkly descrito em **Manutenção** (no README do PIDgey) e rode o **Run test**; ele usa a função `consultar_pid`, criada pelo `setup_supabase.sql` do PIDgey.
 
 ### 5. Instalar como app (opcional)
 Os sites são PWA. No celular, abra o endereço do site e use **Adicionar à tela inicial**:
@@ -72,14 +72,8 @@ Os sites são PWA. No celular, abra o endereço do site e use **Adicionar à tel
 - **iPhone:** botão **Compartilhar**, **Adicionar à Tela de Início**.
 
 ## Manutenção
-O plano gratuito do Supabase pausa o projeto após cerca de 7 dias sem uso. Para evitar isso, uma tarefa agendada no **cron-job.org** (gratuito) faz uma consulta mínima (função `ping`, sem dados) a cada 2 ou 3 dias. Configure uma vez:
-1. Crie uma conta em https://cron-job.org e, em **Cronjobs**, clique em **Create cronjob**.
-2. **URL:** `SUA_URL_DO_SUPABASE/rest/v1/rpc/ping` (a URL é a `SUPABASE_URL` do `config.js`).
-3. **Agendamento:** a cada 2 ou 3 dias (por exemplo, todo dia às 03:00 também serve).
-4. Em **Advanced**: método de requisição `POST`; cabeçalhos `apikey: SUA_CHAVE_PUBLISHABLE`, `Authorization: Bearer SUA_CHAVE_PUBLISHABLE` e `Content-Type: application/json`; corpo `{}`. A chave é a `SUPABASE_CHAVE` do `config.js` (a publishable, nunca a secret).
-5. Salve e use **Test run**: a resposta deve ser `"ok"` com status 200.
-- Se o projeto pausar mesmo assim, use **Restore** no painel do Supabase.
-- Se o PIDgey usa o mesmo projeto do Supabase, esta única tarefa serve para os dois.
+O plano gratuito do Supabase pausa o projeto após cerca de 7 dias com pouca atividade no banco de dados. Para evitar isso, um monitor gratuito no **Checkly** abre o PIDgey num navegador de verdade a cada 6 horas e consulta o PID de teste `PID-000-000-000/00` (função `consultar_pid`, criada pelo `setup_supabase.sql` do PIDgey). Como o PokéPOS e o PIDgey usam o mesmo projeto do Supabase, esse único monitor serve para os dois. O passo a passo completo (conta, script, frequência, round-robin e alertas) está na seção **Manutenção** do README do PIDgey.
+- Se o monitor falhar, o projeto provavelmente pausou: abra-o no painel do Supabase e clique em **Resume project** (o aviso por e-mail do Supabase chega cerca de 1 semana antes).
 - Para atualizar o site, edite os arquivos no repositório; o GitHub Pages publica sozinho em alguns minutos.
 
 ## Arquivos
@@ -98,5 +92,5 @@ O plano gratuito do Supabase pausa o projeto após cerca de 7 dias sem uso. Para
 
 ---
 
-© 2026 Ruan Oliveira Lima · Instagram: https://www.instagram.com/ruanoliveiralima_/
+© 2026 Ruan Oliveira Lima · Instagram: https://www.instagram.com/limaoruan/
 Licença: CC BY-SA 4.0 (texto completo no `LICENCE.md`)

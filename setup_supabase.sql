@@ -256,11 +256,6 @@ language sql stable set search_path = public as $$
   )
 $$;
 
--- Ping: consulta mínima e pública, só para manter o projeto Supabase ativo (não lê nenhum dado).
--- Chamada por uma tarefa agendada no cron-job.org (ver README, seção Manutenção).
-create or replace function ping() returns text
-language sql stable set search_path = public as $$ select 'ok'::text $$;
-
 -- ---------- 8. Segurança (RLS + permissões) ----------
 alter table folhas        enable row level security;
 alter table bottons       enable row level security;
@@ -280,7 +275,7 @@ revoke execute on function
   pid_fmt(bigint, smallint), bloquear_exclusao_entregue(),
   entregar(bigint, smallint, numeric, boolean, text), criar_folha(int), receber(bigint, smallint),
   custear(numeric, text), investir(numeric, text),
-  pos_folhas(int, bigint), pos_bottons(bigint), pos_a_receber(), pos_caixa(int, bigint), ping()
+  pos_folhas(int, bigint), pos_bottons(bigint), pos_a_receber(), pos_caixa(int, bigint)
   from public, anon, authenticated;
 
 grant select, insert, update, delete on folhas, bottons to authenticated;
@@ -298,4 +293,3 @@ grant execute on function pos_folhas(int, bigint)                            to 
 grant execute on function pos_bottons(bigint)                                to authenticated;
 grant execute on function pos_a_receber()                                    to authenticated;
 grant execute on function pos_caixa(int, bigint)                             to authenticated;
-grant execute on function ping()                                             to anon, authenticated;
